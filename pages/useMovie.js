@@ -1,7 +1,5 @@
 import {useEffect, useState} from 'react'
 import axios from 'axios'
-import React from 'react'
-
 export default function useMovie(searchValue, pageNumber) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
@@ -13,19 +11,26 @@ export default function useMovie(searchValue, pageNumber) {
         let cancel;
         axios({
             method:'GET',
-            url : `http://www.omdbapi.com`,
-            params: {s:searchValue, page: pageNumber, apikey:'3392ffe5'},
+            url : `http://0.0.0.0:8000/smovies`,
+            params: {search:searchValue, page: pageNumber, apikey:'3392ffe5'},
+            headers:{
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin' : '*'
+            },
             cancelToken: new axios.CancelToken(c=>cancel=c)
         }).then((res)=>{
-            console.log(res.data.Response);
-            if (res.data.Response && res.data.Search) {
+            console.log(res.data, "dataallllaa");
+            if (res.data ) {
             console.log(res.data.Search, "res dattttttt");
             let pre = movie;
-            let d = res.data.Search;
+            let d = res.data;
             for (let  i = 0; i < d.length; i++) pre.push(d[i])
+            if (pageNumber == 1)
+            setMoive(d)
+            else 
             setMoive(pre)
             console.log(movie ,"movie");
-            setHasMore(res.data.Search.length > 0)
+            setHasMore(res.data.length > 0)
             setLoading(false)
         }}).catch(e=>{
             if(axios.isCancel(e)) return

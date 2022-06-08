@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import useMovie from "./useMovie";
-
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
-  const {loading, movie, error, hasMore} = useMovie(searchValue, pageNumber)
+  const {loading, movie, hasMore} = useMovie(searchValue, pageNumber)
   const observer = useRef()
   const lastMovieRef = useCallback(node=>{
     if (loading) return
@@ -24,22 +23,6 @@ export default function Home() {
     setSearchValue(e.target.value);
     setPageNumber(1);
   }
-  // const [movies, setMovies] = useState([]);
-  // const [searchValue, setSearchValue] = useState("");
-  // const getMovieRequest = async (resp) => {
-  //   const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=3392ffe5`;
-  //   const response = await fetch(url);
-  //   const responseJSON = await response.json();
-  //   if (responseJSON.Search) {
-  //     setMovies(responseJSON.Search);
-  //   }
-  // };
-  // const setSearchValues = (val) => {
-  //   setSearchValue(val);
-  // };
-  // useEffect(() => {
-  //   getMovieRequest(searchValue);
-  // }, [searchValue]);
   return (
     <>
       <Head>
@@ -48,8 +31,10 @@ export default function Home() {
       <h1>Movie Search Engine</h1>
       <div>
         <button className="btn">
-          <Link href="/liked" style={{ textDecoration: "none" }}>
-            Liked Movies
+
+          <Link href="/liked" className="text-link st" style={{ textDecoration: "none", color:"black" }}>
+               <h6  style={{color:"black"}}> Liked Movies</h6>
+           {/* </button> */}
           </Link>
         </button>
       </div>
@@ -104,8 +89,9 @@ export default function Home() {
                       <br />
                       <button className="btn card_btn">
                         <Link
+                        className="text-link"
                           href={`/${m.imdbID}`}
-                          style={{ textDecoration: "none" }}
+                          style={{ textDecoration: 'none', color: 'white' }}
                         >
                           Details
                         </Link>

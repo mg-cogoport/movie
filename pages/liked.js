@@ -1,44 +1,35 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios'
 const Liked = () => {
   const [movieData, setMovieData] = useState([]);
-  const movieId = localStorage.getItem("likeds");
-  movieId = JSON.parse(movieId);
-  if (!movieId) movieId = [];
   const getMovieRequest = async (resp) => {
-    const movies = [];
-    console.log("Movie idddd", movieId);
-    for (let i = 0; i < movieId.length; i++) {
-      const url = `http://www.omdbapi.com/?i=${movieId[i]}&apikey=3392ffe5`;
-      const response = await fetch(url);
-      const responseJSON = await response.json();
-      console.log(responseJSON);
-      movies.push(responseJSON);
-    }
-    setMovieData(movies);
-  };
-  const setMovieRequest = async (movieId) => {
-    const movies = [];
-    console.log("Movie idddd", movieId);
-    for (let i = 0; i < movieId.length; i++) {
-      const url = `http://www.omdbapi.com/?i=${movieId[i]}&apikey=3392ffe5`;
-      const response = await fetch(url);
-      const responseJSON = await response.json();
-      console.log(responseJSON);
-      movies.push(responseJSON);
-    }
-    setMovieData(movies);
+    axios({
+        method:'GET',
+        url : `http://0.0.0.0:8000/lmovies`,
+        headers:{
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin' : '*'
+        },
+    }).then((data)=>{
+      console.log("thisis liked daata,,,,", data);
+      setMovieData(data.data);
+    })
+    
   };
   const addMovie = (id) => {
-    const movieId = localStorage.getItem("likeds");
-    movieId = JSON.parse(movieId);
-    if (movieId.includes(id)) {
-      movieId = movieId.filter((value) => value != id);
-    }
-    localStorage.setItem("likeds", JSON.stringify(movieId));
-    movieId = localStorage.getItem("likeds");
-    movieId = JSON.parse(movieId);
-    console.log("chek", movieId);
-    setMovieRequest(movieId);
+    axios({
+      method:'PUT',
+      url : `http://0.0.0.0:8000/movies`,
+      params: {imdbID: id, isliked: false},
+      headers:{
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin' : '*'
+      }
+      
+  }).then(()=>{
+    getMovieRequest()
+    console.log(data, "liked");
+  }).catch(err=>console.log(err))
   };
   useEffect(() => {
     getMovieRequest();

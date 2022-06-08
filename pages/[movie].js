@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import axios from 'axios'
 import React, { useEffect, useState } from "react";
 const Movie = () => {
   const router = useRouter();
@@ -6,7 +7,7 @@ const Movie = () => {
   const [liked, setLiked] = useState(false);
   const { movie } = router.query;
   const getMovieRequest = async (resp) => {
-    const url = `http://www.omdbapi.com/?i=${movie}&apikey=3392ffe5`;
+    const url = `http://0.0.0.0:8000/movies/${movie}`;
     const response = await fetch(url);
     const responseJSON = await response.json();
     console.log(responseJSON);
@@ -15,20 +16,35 @@ const Movie = () => {
     }
   };
   const addMovie = (id) => {
-    const movieId = localStorage.getItem("likeds");
-    movieId = JSON.parse(movieId);
-    // if (movieId.includes(id))
-    if (movieId.includes(id)) {
-      movieId = movieId.filter((value) => value != id);
-      setLiked(false);
-    } else {
-      if (movieId) {
-        // movieId = JSON.parse(movieId);
-        movieId.push(id);
-        setLiked(true);
-      } else movieId = [id];
-    }
-    localStorage.setItem("likeds", JSON.stringify(movieId));
+      axios({
+        method:'PUT',
+        url : `http://0.0.0.0:8000/movies/${id}`,
+        params: {isliked:!liked},
+        headers:{
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin' : '*'
+        }
+        
+    }).then((data)=>{
+      console.log(data, "liked");
+
+    }).catch(err=>console.log(err))
+    getMovieRequest(id);
+    setLiked(!liked)
+    // const movieId = localStorage.getItem("likeds");
+    // movieId = JSON.parse(movieId);
+    // // if (movieId.includes(id))
+    // if (movieId.includes(id)) {
+    //   movieId = movieId.filter((value) => value != id);
+    //   setLiked(false);
+    // } else {
+    //   if (movieId) {
+    //     // movieId = JSON.parse(movieId);
+    //     movieId.push(id);
+    //     setLiked(true);
+    //   } else movieId = [id];
+    // }
+    // localStorage.setItem("likeds", JSON.stringify(movieId));
   };
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -64,7 +80,7 @@ const Movie = () => {
                 <li>
                   <i className="material-icons">
                     {" "}
-                    {liked ? "Unlike" : "Like"} &hearts;
+                    {movieData.isliked ? "Unlike" : "Like"} &hearts;
                   </i>
                 </li>
               </ul>
